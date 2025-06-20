@@ -29,20 +29,20 @@ This is a backend RESTful API for an Expense Tracker application built using **S
 
 ## 📦 API Endpoints (Sample)
 
-| Method | Endpoint           | Description              |
-|--------|--------------------|--------------------------|
-| GET    | `/api/v1/expenses`        | Get paginated expenses   |
-| POST   | `/api/v1/expenses`        | Add a new expense        |
-| PUT    | `/api/v1/expenses/{id}`   | Update an expense        |
-| DELETE | `/api/v1/expenses/{id}`   | Delete an expense        |
+| Method | Endpoint                 | Description            |
+|--------|--------------------------|------------------------|
+| GET    | `/api/v1/expenses`       | Get paginated expenses |
+| POST   | `/api/v1/expenses`       | Add a new expense      |
+| PUT    | `/api/v1/expenses/{id}`  | Update an expense      |
+| DELETE | `/api/v1/expenses/{id}`  | Delete an expense      |
 
 Pagination Example:
 ```http
-GET /expenses?page=0&size=5
+GET /api/v1/expenses?page=0&size=5
+``` 
 
-
-
-🧑‍💻 Getting Started
+---
+##🧑‍💻 Getting Started
 Prerequisites
 Java 17+
 
@@ -54,9 +54,10 @@ Setup
 Clone the repository:
 
 bash
+
 git clone https://github.com/AshishShewale333/expense-tracker-springboot.git
 cd expense-tracker-springboot
-Configure application.properties or application.yml:
+Configure application.properties:
 
 properties
 spring.datasource.url=jdbc:mysql://localhost:3306/expense_db
@@ -70,6 +71,10 @@ bash
 You can test the endpoints using:
 
 Postman
+
+Swagger (if configured)
+
+Curl / HTTPie
 
 📁 Folder Structure
 css
@@ -85,8 +90,6 @@ src/
 │   │       └── model/
 │   └── resources/
 │       └── application.properties
-
-
 🙋‍♂️ Author
 Ashish Shewale
 GitHub: @AshishShewale333
