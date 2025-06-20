@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expensetrackerapi.entity.Expense;
 import com.expensetrackerapi.service.ExpenseService;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class ExpenseController {
 
@@ -44,7 +46,7 @@ public class ExpenseController {
 	    }
 
 	    @PostMapping("/expenses")
-	    public ResponseEntity<Expense> saveExpenseDetails(@RequestBody Expense expense) {
+	    public ResponseEntity<Expense> saveExpenseDetails(@Valid @RequestBody Expense expense) {
 	        Expense savedExpense = expenseService.saveExpense(expense);
 	        return ResponseEntity.status(HttpStatus.CREATED).body(savedExpense);  // 201 Created
 	    }
