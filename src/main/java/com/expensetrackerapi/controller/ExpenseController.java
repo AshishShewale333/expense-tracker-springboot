@@ -1,9 +1,9 @@
 package com.expensetrackerapi.controller;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,4 +57,24 @@ public class ExpenseController {
 	        Expense updatedExpense = expenseService.updateExpense(id, expense);
 	        return ResponseEntity.ok(updatedExpense);
 	    }
+	    
+	    @GetMapping("/expenses/category")
+	    public ResponseEntity<List<Expense>> filterByCategory(@RequestParam("category") String category,Pageable page) {
+	        List<Expense> expenses = expenseService.filterByCategory(category, page);
+	        return ResponseEntity.ok(expenses);
+	    }
+	    
+	    @GetMapping("/expenses/name")
+	    public ResponseEntity<List<Expense>> filterByName(@RequestParam("name") String name,Pageable page) {
+	        List<Expense> expenses = expenseService.filterByName(name, page);
+	        return ResponseEntity.ok(expenses);
+	    }
+	    
+		@GetMapping("/expenses/date")
+		public ResponseEntity<List<Expense>> filterByDate(@RequestParam(value = "startDate", required = false) Date startDate,
+														  @RequestParam(value ="endDate", required = false) Date endDate,
+														  Pageable page) {
+			List<Expense> expenses = expenseService.filterByDate(startDate, endDate, page);
+			return ResponseEntity.ok(expenses);
+		}
 }

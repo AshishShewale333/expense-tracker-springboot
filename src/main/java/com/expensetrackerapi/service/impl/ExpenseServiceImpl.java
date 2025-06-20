@@ -1,5 +1,6 @@
 package com.expensetrackerapi.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +61,28 @@ public class ExpenseServiceImpl implements ExpenseService {
 
 		return expenseRepo.save(existingExpense);
 	}
+
+	@Override
+	public List<Expense> filterByCategory(String category, Pageable page) {
+		return expenseRepo.findByCategory(category, page).toList();
+	}
+
+	@Override
+	public List<Expense> filterByName(String name, Pageable page) {
+		return expenseRepo.findByNameContaining(name, page).toList();
+	}
+	
+	public List<Expense> filterByDate(Date startDate, Date endDate, Pageable page) {
+		if (startDate == null) {
+			startDate = new Date(0);
+		}
+		if (endDate == null) {
+			endDate = new Date(System.currentTimeMillis());
+		}
+		return expenseRepo.findByDateBetween(startDate, endDate, page).toList();
+	}
+
+
 	
 
 }
