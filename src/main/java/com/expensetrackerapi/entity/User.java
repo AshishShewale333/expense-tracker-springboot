@@ -32,7 +32,7 @@ public class User {
 	@JsonIgnore
 	private String password;
 	
-	private long age;
+	private Long age;
 	
 	@Column(name="created_at",nullable = false,updatable=false)
 	@CreationTimestamp

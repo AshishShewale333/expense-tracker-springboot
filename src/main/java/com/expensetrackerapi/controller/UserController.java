@@ -22,32 +22,24 @@ import jakarta.validation.Valid;
 @RestController
 public class UserController {
 
-	
 	@Autowired
 	private UserService userService;
-	
-	
-	@PostMapping("/register")
-	public ResponseEntity<User> save(@Valid @RequestBody UserModel user){
-		return new ResponseEntity<User>(userService.createUser(user),HttpStatus.CREATED);
-	}
-	
-	
-	@GetMapping("/users/{id}")
-	public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
-		User user = userService.getUserById(id);
+
+	@GetMapping("/profile")
+	public ResponseEntity<User> getUserById() {
+		User user = userService.getUserById();
 		return ResponseEntity.ok(user);
 	}
-	 
-	@PutMapping("/users/{id}")
-	public ResponseEntity<User> updateUserById(@PathVariable("id") Long id,@RequestBody UserModel user) {
-	 User updateUser = userService.updateUser(id, user);
+
+	@PutMapping("/profile")
+	public ResponseEntity<User> updateUserById(@RequestBody UserModel user) {
+		User updateUser = userService.updateUser(user);
 		return ResponseEntity.ok(updateUser);
 	}
-	
-	@DeleteMapping("/users/{id}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable("id") Long id) {
-		userService.deleteUserById(id);
-        return ResponseEntity.noContent().build(); 
-    }
+
+	@DeleteMapping("/deactivate")
+	public ResponseEntity<Void> deleteUserById() {
+		userService.deleteUserById();
+		return ResponseEntity.noContent().build();
+	}
 }
