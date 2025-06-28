@@ -23,43 +23,49 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "tbl_expenses")
+@Builder
 public class Expense {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(unique = true)
+	private String expenseId;
+	
 	@Column(name = "expense_name")
-	@NotNull(message = "Expense name should not be null")
-	@Size(min=3, message = "Expense name should have atleast 3 characters")
 	private String name;
 
-	private String description;
 
+	private String description;
+	
 	@Column(name = "expense_amount")
-	@NotNull(message = "Expense amount should not be null")
 	private BigDecimal amount;
 
-	private String category;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "category_id", nullable = false)
+	@OnDelete(action = OnDeleteAction.RESTRICT)
+	private CategoryEntity category;
 
 	private Date date;
 	
-	@Column(name="created_at",nullable=false,updatable=false)
+	@Column(name = "created_at", nullable = false, updatable = false)
 	@CreationTimestamp
 	private Timestamp createdAt;
-
-	@Column(name="updated_at")
+	
+	@Column(name = "updated_at")
 	@UpdateTimestamp
 	private Timestamp updatedAt;
-	
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "user_id", nullable = false)

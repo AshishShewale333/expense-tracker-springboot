@@ -3,93 +3,130 @@ package com.expensetrackerapi.service.impl;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.expensetrackerapi.dto.ExpenseDTO;
+import com.expensetrackerapi.entity.CategoryEntity;
 import com.expensetrackerapi.entity.Expense;
 import com.expensetrackerapi.exceptions.ResourceNotFoundException;
+import com.expensetrackerapi.mapper.ExpenseMapper;
+import com.expensetrackerapi.repository.CategoryRepository;
 import com.expensetrackerapi.repository.ExpenseRepository;
 import com.expensetrackerapi.service.ExpenseService;
 import com.expensetrackerapi.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ExpenseServiceImpl implements ExpenseService {
-	
-	@Autowired
-	ExpenseRepository expenseRepo;
-	
-	@Autowired
-	private UserService userService;
 
 
+	private final ExpenseRepository expenseRepo;
+	private final UserService userService;
+	private final CategoryRepository categoryRepository;
+
+	private final ExpenseMapper expenseMapper;
+	
 	@Override
-	public Page<Expense> getAllExpenses(Pageable page) {
-		return (Page<Expense>) expenseRepo.findByUserId(userService.getLoggedInUser().getId(), page);
+	public List<ExpenseDTO> getAllExpenses(Pageable page) {
+		List<Expense> listOfExpenses = expenseRepo.findByUserId(userService.getLoggedInUser().getId(), page).toList();
+		return listOfExpenses.stream().map(expense -> expenseMapper.mapToExpenseDTO(expense)).collect(Collectors.toList());
 	}
 
 	@Override
-	public Expense getExpenseById(Long id) {
-		Optional<Expense> expense = expenseRepo.findByUserIdAndId(userService.getLoggedInUser().getId(),id);
-		if(expense.isPresent()) {
-			return expense.get();
-		}else {
-			throw new ResourceNotFoundException("Expense not found for the id "+ id);
+	public ExpenseDTO getExpenseById(String expenseId){
+		Expense existingExpense = getExpenseEntity(expenseId);
+		return expenseMapper.mapToExpenseDTO(existingExpense);
+
+	}
+
+	private Expense getExpenseEntity(String expenseId) {
+		Optional<Expense> expense = expenseRepo.findByUserIdAndExpenseId(userService.getLoggedInUser().getId(), expenseId);
+		if (!expense.isPresent()) {
+			throw new ResourceNotFoundException("Expense is not found for the id "+ expenseId);
 		}
+		return expense.get();
 	}
 
 	@Override
-	public void deleteExpenseById(Long id) {
-		Expense expense = getExpenseById(id);
+	public void deleteExpenseById(String expenseId) {
+		Expense expense = getExpenseEntity(expenseId);
 		expenseRepo.delete(expense);
 	}
 
 	@Override
-	public Expense saveExpense(Expense expense) {
-		expense.setUser(userService.getLoggedInUser());
-		return expenseRepo.save(expense);
+	public ExpenseDTO saveExpenseDetails(ExpenseDTO expenseDTO) {
+		//check the existance of category
+		Optional<CategoryEntity> optionalCategory = categoryRepository.findByUserIdAndCategoryId(userService.getLoggedInUser().getId(), expenseDTO.getCategoryId());
+		if (!optionalCategory.isPresent()){
+			throw new ResourceNotFoundException("Category not found for the id "+expenseDTO.getCategoryId());
+		}
+		expenseDTO.setExpenseId(UUID.randomUUID().toString());
+		//map to entity object
+		Expense newExpense = expenseMapper.mapToExpenseEntity(expenseDTO);
+		//save to the database
+		newExpense.setCategory(optionalCategory.get());
+		newExpense.setUser(userService.getLoggedInUser());
+		newExpense = expenseRepo.save(newExpense);
+		//map to response object
+		return expenseMapper.mapToExpenseDTO(newExpense);
 	}
 
 	@Override
-	public Expense updateExpense(Long id, Expense expense) {
-		Expense existingExpense = getExpenseById(id);
-
-		existingExpense.setName(expense.getName() != null ? expense.getName() : existingExpense.getName());
-
-		existingExpense.setDescription(expense.getDescription() != null ? expense.getDescription() : existingExpense.getDescription());
-
-		existingExpense.setAmount(expense.getAmount() != null ? expense.getAmount() : existingExpense.getAmount());
-
-		existingExpense.setCategory(expense.getCategory() != null ? expense.getCategory() : existingExpense.getCategory());
-
-		existingExpense.setDate(expense.getDate() != null ? expense.getDate() : existingExpense.getDate());
-
-		return expenseRepo.save(existingExpense);
+	public ExpenseDTO updateExpenseDetails(String expenseId, ExpenseDTO expenseDTO){
+		Expense existingExpense = getExpenseEntity(expenseId);
+		if (expenseDTO.getCategoryId() != null) {
+			Optional<CategoryEntity> optionalCategory = categoryRepository.findByUserIdAndCategoryId(userService.getLoggedInUser().getId(), expenseDTO.getCategoryId());
+			if (!optionalCategory.isPresent()) {
+				throw new ResourceNotFoundException("Category not found for the id "+expenseDTO.getCategoryId());
+			}
+			existingExpense.setCategory(optionalCategory.get());
+		}
+		existingExpense.setName(expenseDTO.getName() != null ? expenseDTO.getName() : existingExpense.getName());
+		existingExpense.setDescription(expenseDTO.getDescription() != null ? expenseDTO.getDescription() : existingExpense.getDescription());
+		existingExpense.setDate(expenseDTO.getDate() != null ? expenseDTO.getDate() : existingExpense.getDate());
+		existingExpense.setAmount(expenseDTO.getAmount() != null ? expenseDTO.getAmount() : existingExpense.getAmount());
+		existingExpense = expenseRepo.save(existingExpense);
+		return expenseMapper.mapToExpenseDTO(existingExpense);
 	}
 
 	@Override
-	public List<Expense> filterByCategory(String category, Pageable page) {
-		return expenseRepo.findByUserIdAndCategory(userService.getLoggedInUser().getId(),category, page).toList();
+	public List<ExpenseDTO> readByCategory(String category, Pageable page) {
+		Optional<CategoryEntity> optionalCategory = categoryRepository.findByNameAndUserId(category, userService.getLoggedInUser().getId());
+		if (!optionalCategory.isPresent()) {
+			throw new ResourceNotFoundException("Category not found for the name "+category);
+		}
+		List<Expense> list = expenseRepo.findByUserIdAndCategoryId(userService.getLoggedInUser().getId(), optionalCategory.get().getId(), page).toList();
+		return list.stream().map(expense -> expenseMapper.mapToExpenseDTO(expense)).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<Expense> filterByName(String name, Pageable page) {
-		return expenseRepo.findByUserIdAndNameContaining(userService.getLoggedInUser().getId(),name, page).toList();
+	public List<ExpenseDTO> readByName(String keyword, Pageable page) {
+		List<Expense> list = expenseRepo.findByUserIdAndNameContaining(userService.getLoggedInUser().getId(), keyword, page).toList();
+		return list.stream().map(expense -> expenseMapper.mapToExpenseDTO(expense)).collect(Collectors.toList());
 	}
-	
-	public List<Expense> filterByDate(Date startDate, Date endDate, Pageable page) {
+
+	@Override
+	public List<ExpenseDTO> readByDate(Date startDate, Date endDate, Pageable page) {
+		
 		if (startDate == null) {
 			startDate = new Date(0);
 		}
+		
 		if (endDate == null) {
 			endDate = new Date(System.currentTimeMillis());
 		}
-		return expenseRepo.findByUserIdAndDateBetween(userService.getLoggedInUser().getId(),startDate, endDate, page).toList();
+		
+		List<Expense> list = expenseRepo.findByUserIdAndDateBetween(userService.getLoggedInUser().getId(), startDate, endDate, page).toList();
+		return list.stream().map(expense -> expenseMapper.mapToExpenseDTO(expense)).collect(Collectors.toList());
 	}
-
-
-	
 
 }

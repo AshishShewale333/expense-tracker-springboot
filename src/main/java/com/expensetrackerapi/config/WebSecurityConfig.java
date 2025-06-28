@@ -43,9 +43,10 @@ public class WebSecurityConfig {
 	}
 	
 	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+		return authConfig.getAuthenticationManager();
 	}
+	
 	
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider() {
@@ -58,9 +59,12 @@ public class WebSecurityConfig {
 	}
 	
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-		return authConfig.getAuthenticationManager();
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
+
+	
+
 	
 	
 }
