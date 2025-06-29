@@ -1,5 +1,3 @@
-# expense-tracker-springboot
-
 
 # 💰 Expense Tracker - Spring Boot Backend
 
