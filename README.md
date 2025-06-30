@@ -11,19 +11,20 @@ This is a backend RESTful API for an Expense Tracker application built using **S
 - ✅ CRUD operations on expenses and categories
 - 📊 Pagination and filtering for expense retrieval
 - 🔒 Secure REST endpoints using Spring Security
-- 🌐 CORS-configurable for frontend integration
 - ☁️ Cloud-deployable (AWS Elastic Beanstalk, RDS-ready)
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Java 17+**
-- **Spring Boot**
-- **Spring Data JPA**
-- **Hibernate**
-- **MySQL / H2 (Configurable)**
-- **Lombok**
+- **Java 17**  
+- **Spring Boot** (Web, Security, Data JPA)  
+- **Spring Security** (JWT authentication)  
+- **MySQL** (Amazon RDS)  
+- **MapStruct** (DTO ↔ Entity mapping)  
+- **Lombok**  
+- **AWS Elastic Beanstalk** (deployment)  
+- **Maven** (dependency & build management)  
 
 ---
 ## 📦 API Endpoints (Security)
