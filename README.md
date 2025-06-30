@@ -7,10 +7,12 @@ This is a backend RESTful API for an Expense Tracker application built using **S
 
 ## 🚀 Features
 
-- ✅ Create, Read, Update, Delete (CRUD) expenses
-- 📊 Pagination support for expense listing
-- 🧩 Clean REST API design
-- 🔒 CORS-configurable and ready for frontend integration
+- ✅ User registration and login (JWT Authentication)
+- ✅ CRUD operations on expenses and categories
+- 📊 Pagination and filtering for expense retrieval
+- 🔒 Secure REST endpoints using Spring Security
+- 🌐 CORS-configurable for frontend integration
+- ☁️ Cloud-deployable (AWS Elastic Beanstalk, RDS-ready)
 
 ---
 
@@ -24,8 +26,29 @@ This is a backend RESTful API for an Expense Tracker application built using **S
 - **Lombok**
 
 ---
+## 📦 API Endpoints (Security)
 
-## 📦 API Endpoints (Sample)
+
+## 🔐 Auth APIs
+
+| Method | Endpoint             | Description       |
+|--------|----------------------|-------------------|
+| POST   | `/api/auth/register` | Register a user   |
+| POST   | `/api/auth/login`    | Login and get JWT |
+
+
+
+## 🗂️ Category APIs (Secured)
+
+| Method | Endpoint                  | Description               |
+|--------|---------------------------|---------------------------|
+| POST   | `/api/v1/categories`      | Create a new category     |
+| GET    | `/api/v1/categories`      | Get all categories        |
+| DELETE | `/api/v1/categories/{id}` | Delete a category by ID   |
+
+
+
+## 💸 Expense APIs (Secured)
 
 | Method | Endpoint                 | Description            |
 |--------|--------------------------|------------------------|
@@ -34,10 +57,10 @@ This is a backend RESTful API for an Expense Tracker application built using **S
 | PUT    | `/api/v1/expenses/{id}`  | Update an expense      |
 | DELETE | `/api/v1/expenses/{id}`  | Delete an expense      |
 
-Pagination Example:
-```http
-GET /api/v1/expenses?page=0&size=5
-```
+
+
+---
+## 📦 API Endpoints (Sample)
 
 ### 👤 User API
 
@@ -48,7 +71,7 @@ GET /api/v1/expenses?page=0&size=5
 | PUT    | `/api/v1/users/{id}`  | Update user info (partial/full) |
 | DELETE | `/api/v1/users/{id}`  | Delete user by ID               |
 
----
+
 
 #### 📝 Example Request – Create User
 
@@ -86,8 +109,87 @@ Content-Type: application/json
   "email": "john.doe@example.com",
   "age": 30
 }
+```
+---
+### 📂 Category APIs
+
+| Method | Endpoint                      | Description                         |
+|--------|-------------------------------|-------------------------------------|
+| POST   | `/api/v1/categories`          | Create a new category               |
+| GET    | `/api/v1/categories`          | Retrieve a list of all categories   |
+| DELETE | `/api/v1/categories/{id}`     | Delete a category by its ID         |
+
+#### 📝 Example Request – Create Category
+```http
+POST /api/v1/categories
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+
+{
+  "name": "Bill",
+  "description": "Electricity, Wifi, Mobile",
+  "icon": "icon1"
+}
+```
+#### 📥 Example Response – Get All Categories
+
+```json
+[
+  {
+    "id": "c1",
+    "name": "Bill",
+    "description": "Electricity, Wifi, Mobile",
+    "icon": "icon1"
+  },
+  {
+    "id": "c2",
+    "name": "Groceries",
+    "description": "Food, household items",
+    "icon": "icon2"
+  }
+]
 
 ```
+#### 📥 Example Request – Delete Category
+
+```http
+DELETE /api/v1/categories/c1
+Authorization: Bearer <JWT_TOKEN>
+
+```
+---
+## 💸 Expense APIs
+
+| Method | Endpoint                 | Description            |
+|--------|--------------------------|------------------------|
+| GET    | `/api/v1/expenses`       | Get paginated expenses |
+| POST   | `/api/v1/expenses`       | Add a new expense      |
+| PUT    | `/api/v1/expenses/{id}`  | Update an expense      |
+| DELETE | `/api/v1/expenses/{id}`  | Delete an expense      |
+
+Pagination Example:
+```http
+GET /api/v1/expenses?page=0&size=5
+```
+---
+## ☁️ AWS Deployment
+
+The backend for this Expense Tracker project is deployed and accessible via AWS Elastic Beanstalk.
+
+🔗 **Live API Endpoint**:  
+[`http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/v1`](http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/v1)
+
+### 🌐 Example Base URLs:
+
+- 👤 Users: `http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/v1/users`
+- 🔐 Auth: `http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/auth/login`
+- 📂 Categories: `http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/v1/categories`
+- 💰 Expenses: `http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/v1/expenses`
+
+### ✅ Notes
+
+- Make sure to include the **JWT token** in the `Authorization` header as a Bearer token for all secured endpoints.
+- The application is hosted using **AWS Elastic Beanstalk**, configured with MySQL (RDS) and built with Maven.
 
 ---
 ## 🧑‍💻 Getting Started
@@ -136,8 +238,23 @@ mvn spring-boot:run
 ```
 
 
-Postman
+---
 
+## 📬 Postman Collection
+
+To test and explore the Expense Tracker API endpoints easily, you can import the Postman collection provided below.
+
+### 🔗 Collection Link
+
+👉 [Click here to download Postman Collection](https://dev888-3123.postman.co/workspace/Exepense-Tracker~c8ab61a7-e194-487b-9862-f718849dedf4/collection/33963513-97a2e1f6-dca2-4d6b-8ccf-21d02f74a920?action=share&source=copy-link&creator=33963513)  
+
+### 🛠️ How to Use
+
+1. Open **Postman**.
+2. Click on **Import** → **Link/File/Raw Text** → Paste or upload the collection.
+3. Set your **Base URL** as:  
+
+---
 
 📁 **Folder Structure**
 ```bash
