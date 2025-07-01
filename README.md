@@ -11,7 +11,7 @@ This is a backend RESTful API for an Expense Tracker application built using **S
 - ✅ CRUD operations on expenses and categories
 - 📊 Pagination and filtering for expense retrieval
 - 🔒 Secure REST endpoints using Spring Security
-- ☁️ Cloud-deployable (AWS Elastic Beanstalk, RDS-ready)
+
 
 ---
 
@@ -20,10 +20,8 @@ This is a backend RESTful API for an Expense Tracker application built using **S
 - **Java 17**  
 - **Spring Boot** (Web, Security, Data JPA)  
 - **Spring Security** (JWT authentication)  
-- **MySQL** (Amazon RDS)  
 - **MapStruct** (DTO ↔ Entity mapping)  
 - **Lombok**  
-- **AWS Elastic Beanstalk** (deployment)  
 - **Maven** (dependency & build management)  
 
 ---
@@ -172,25 +170,8 @@ Pagination Example:
 ```http
 GET /api/v1/expenses?page=0&size=5
 ```
----
-## ☁️ AWS Deployment
 
-The backend for this Expense Tracker project is deployed and accessible via AWS Elastic Beanstalk.
 
-🔗 **Live API Endpoint**:  
-[`http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/v1`](http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/v1)
-
-### 🌐 Example Base URLs:
-
-- 👤 Users: `http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/v1/users`
-- 🔐 Auth: `http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/auth/login`
-- 📂 Categories: `http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/v1/categories`
-- 💰 Expenses: `http://expensetrackerbackend-env.eba-3sv2kjt7.eu-north-1.elasticbeanstalk.com/api/v1/expenses`
-
-### ✅ Notes
-
-- Make sure to include the **JWT token** in the `Authorization` header as a Bearer token for all secured endpoints.
-- The application is hosted using **AWS Elastic Beanstalk**, configured with MySQL (RDS) and built with Maven.
 
 ---
 ## 🧑‍💻 Getting Started
